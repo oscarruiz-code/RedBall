@@ -1,45 +1,101 @@
 package com.example.spartacusgame
 
+import android.app.Activity
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
 fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
-    val backgroundImage = if (sharedViewModel.background == "first") {
-        R.drawable.fondopantalla
-    } else {
-        R.drawable.fondopantalla1
+    var startAnimation by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        startAnimation = true
     }
 
+    val transition = updateTransition(targetState = startAnimation, label = "Scale Animation")
+
+    val scale by transition.animateFloat(
+        transitionSpec = {
+            keyframes {
+                durationMillis = 5000
+                0.5f at 0 with LinearOutSlowInEasing
+                1f at 1000 with LinearOutSlowInEasing
+            }
+        },
+        label = "Scale"
+    ) { state ->
+        if (state) 1f else 0.5f
+    }
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     Box(modifier = Modifier.fillMaxSize()) {
+        val backgroundImage = if (sharedViewModel.background == "first") {
+            R.drawable.fondopantalla
+        } else {
+            R.drawable.fondopantalla1
+        }
+
         Image(
             painter = painterResource(id = backgroundImage),
             contentDescription = "Fondo",
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(scale),
             contentScale = ContentScale.Crop
-
         )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 80.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
-            Text("Bienvenido a Spartacus", style = MaterialTheme.typography.headlineMedium)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(150.dp))
 
             Button(onClick = {
                 navController.navigate("game_screen")
-            }) {
-                Text("Iniciar")
+            },
+                modifier = Modifier
+                .fillMaxWidth(0.2f)
+                .padding(bottom = 16.dp)
+                .height(60.dp)
+            ){
+                Text("Start",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(onClick = {
+                activity?.finish()
+            },
+                modifier = Modifier
+                    .fillMaxWidth(0.2f)
+                    .padding(bottom = 16.dp)
+                    .height(60.dp)
+            ){
+                Text("Exit",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
