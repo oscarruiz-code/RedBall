@@ -1,4 +1,4 @@
-package com.example.spartacusgame
+package com.example.spartacusgame.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf

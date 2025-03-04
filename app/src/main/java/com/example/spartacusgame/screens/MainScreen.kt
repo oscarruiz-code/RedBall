@@ -1,4 +1,4 @@
-package com.example.spartacusgame
+package com.example.spartacusgame.screens
 
 import android.app.Activity
 import androidx.compose.animation.core.*
@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.spartacusgame.R
+import com.example.spartacusgame.viewmodels.SharedViewModel
 
 @Composable
 fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
@@ -31,13 +33,13 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
         transitionSpec = {
             keyframes {
                 durationMillis = 5000
-                0.5f at 0 with LinearOutSlowInEasing
+                1.5f at 0 with LinearOutSlowInEasing
                 1f at 1000 with LinearOutSlowInEasing
             }
         },
         label = "Scale"
     ) { state ->
-        if (state) 1f else 0.5f
+        if (state) 1f else 1.5f
     }
 
     val context = LocalContext.current
@@ -56,7 +58,7 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .scale(scale),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillBounds
         )
 
         Column(
@@ -72,9 +74,9 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                 navController.navigate("game_screen")
             },
                 modifier = Modifier
-                .fillMaxWidth(0.2f)
-                .padding(bottom = 16.dp)
-                .height(60.dp)
+                    .fillMaxWidth(0.2f)
+                    .padding(bottom = 16.dp)
+                    .height(60.dp)
             ){
                 Text("Start",
                     fontSize = 24.sp,
