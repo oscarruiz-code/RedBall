@@ -21,6 +21,10 @@ fun GameScreen(viewModel: GameViewModel = viewModel()) {
     val floorManager = FloorManager(onPositionChange = { viewModel.floorBounds = it })
     val floorSecondManager = FloorManager(onPositionChange = { viewModel.floorSecondBounds = it })
 
+    LaunchedEffect(Unit) {
+        viewModel.startGameLoop()
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Suelo verde
         floorManager.CreateFloor(
@@ -41,8 +45,8 @@ fun GameScreen(viewModel: GameViewModel = viewModel()) {
                 .background(Color.Red)
         )
 
-        // Círculo rojo (Personaje)
-        ballManager.CreateBall()  // Llamada a CreateBall para dibujar la bola
+
+        ballManager.CreateBall()
 
         // Joystick
         Joystick(

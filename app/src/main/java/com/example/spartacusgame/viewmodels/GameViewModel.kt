@@ -27,11 +27,16 @@ class GameViewModel : ViewModel() {
     val gravity = Constants.GRAVITY
     private var floorSecondVelocity = 2f
 
-    init {
-        startGameLoop()
+    private fun updateBallBounds() {
+        ballBounds = Rect(
+            left = ballPosition.x - 25f,  // Radio de la bola
+            top = ballPosition.y - 25f,   // Radio de la bola
+            right = ballPosition.x + 25f, // Radio de la bola
+            bottom = ballPosition.y + 25f // Radio de la bola
+        )
     }
 
-    private fun startGameLoop() {
+    fun startGameLoop() {
         viewModelScope.launch {
             while (true) {
                 delay(16) // Simula 60 FPS
@@ -45,6 +50,7 @@ class GameViewModel : ViewModel() {
         applyGravity()
         moveFloorSecond()
         handleCollisions()
+        updateBallBounds()
     }
 
     private fun applyHorizontalMovement() {
@@ -56,6 +62,7 @@ class GameViewModel : ViewModel() {
             ballPosition = ballPosition.copy(y = ballPosition.y + jumpVelocity)
             jumpVelocity += gravity
         }
+
     }
 
     private fun moveFloorSecond() {
@@ -73,6 +80,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun handleCollisions() {
+
         if (ballBounds.overlaps(floorBounds)) {
             handleFloorCollision(floorBounds)
         } else if (ballBounds.overlaps(floorSecondBounds)) {
@@ -86,7 +94,7 @@ class GameViewModel : ViewModel() {
         isFalling = false
         isJumping = false
         jumpVelocity = 0f
-        ballPosition = ballPosition.copy(y = floorBounds.top - ballBounds.height)
+        ballPosition = ballPosition.copy(y = floorBounds.top - 25f)
     }
 
     private fun handleFloorSecondCollision(floorSecondBounds: Rect) {
@@ -101,14 +109,14 @@ class GameViewModel : ViewModel() {
         isFalling = false
         isJumping = false
         jumpVelocity = 0f
-        ballPosition = ballPosition.copy(y = floorSecondBounds.top - ballBounds.height)
+        ballPosition = ballPosition.copy(y = floorSecondBounds.top - 25f)
     }
 
     private fun handleBottomCollision(floorSecondBounds: Rect) {
         isFalling = true
         isJumping = false
         jumpVelocity = -jumpVelocity * 0.8f
-        ballPosition = ballPosition.copy(y = floorSecondBounds.bottom)
+        ballPosition = ballPosition.copy(y = floorSecondBounds.bottom + 25f)
     }
 
     fun onJoystickMove(direction: Offset) {
@@ -118,7 +126,7 @@ class GameViewModel : ViewModel() {
     fun onJump() {
         if (!isJumping) {
             isJumping = true
-            jumpVelocity = -30f
+            jumpVelocity = -20f
         }
     }
 }

@@ -1,5 +1,5 @@
 package com.example.spartacusgame.utils
 
 object Constants {
-    const val GRAVITY = 1.5f
+    const val GRAVITY = 0.2f
 }
