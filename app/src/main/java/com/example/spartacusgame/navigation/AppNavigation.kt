@@ -5,11 +5,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.spartacusgame.screens.GameScreen
-import com.example.spartacusgame.screens.MainScreen
-import com.example.spartacusgame.screens.SplashScreen
-import com.example.spartacusgame.viewmodels.SharedViewModel
+import com.example.spartacusgame.screens.*
 import com.example.spartacusgame.viewmodels.GameViewModel
+import com.example.spartacusgame.viewmodels.SharedViewModel
 
 @Composable
 fun AppNavigation(sharedViewModel: SharedViewModel) {
@@ -24,7 +22,7 @@ fun AppNavigation(sharedViewModel: SharedViewModel) {
             MainScreen(navController, sharedViewModel)
         }
         composable("game_screen") {
-            GameScreen(gameViewModel)
+            GameScreen(gameViewModel, navController)
         }
     }
 }

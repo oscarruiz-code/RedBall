@@ -17,7 +17,7 @@ class BallManager(
     @Composable
     fun CreateBall() {
         Image(
-            painter = painterResource(id = R.drawable.bolajuego), // Asegúrate de que este ID sea correcto
+            painter = painterResource(id = R.drawable.bola1), // Asegúrate de que este ID sea correcto
             contentDescription = "Ball",
             modifier = Modifier
                 .size(50.dp)

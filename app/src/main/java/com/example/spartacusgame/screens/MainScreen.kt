@@ -17,10 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spartacusgame.R
+import com.example.spartacusgame.viewmodels.GameViewModel
 import com.example.spartacusgame.viewmodels.SharedViewModel
 
 @Composable
-fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+fun MainScreen(navController: NavController ,sharedViewModel: SharedViewModel) {
     var startAnimation by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -46,11 +47,7 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     val activity = context as? Activity
 
     Box(modifier = Modifier.fillMaxSize()) {
-        val backgroundImage = if (sharedViewModel.background == "first") {
-            R.drawable.fondopantalla
-        } else {
-            R.drawable.fondopantalla1
-        }
+        val backgroundImage = R.drawable.fondopantalla
 
         Image(
             painter = painterResource(id = backgroundImage),
