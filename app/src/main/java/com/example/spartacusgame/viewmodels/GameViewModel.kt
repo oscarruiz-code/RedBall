@@ -20,7 +20,7 @@ class GameViewModel : ViewModel() {
     var ballBounds by mutableStateOf(Rect.Zero)
     var floorBounds by mutableStateOf(Rect.Zero)
     var floorSecondBounds by mutableStateOf(Rect.Zero)
-    var floorSecondPosition by mutableStateOf(Offset(0f, 400f)) // Inicia en el límite derecho
+    var floorSecondPosition by mutableStateOf(Offset(25f, 400f)) // Inicia en el límite derecho
     var ballVelocity by mutableStateOf(0f)
     var jumpVelocity by mutableStateOf(0f)
     val gravity = Constants.GRAVITY
@@ -39,14 +39,9 @@ class GameViewModel : ViewModel() {
     private var lastShotTime = 0L
     private val shotCooldown = 600L
     private var floorSecondVelocity = -2f // Velocidad inicial hacia la izquierda
-    private val floorSecondWidth = 200f // Ancho de la barra roja
+    val floorSecondWidth = 100f // Ancho de la barra roja
 
-    // Método para establecer las dimensiones de la pantalla
-    fun setScreenDimensions(width: Float, height: Float) {
-        screenWidth = width
-        screenHeight = height
-        floorSecondPosition = Offset(screenWidth - floorSecondWidth, 400f) // Inicia en el límite derecho
-    }
+
 
     // Inicia el bucle principal del juego
     fun startGameLoop() {
@@ -136,22 +131,27 @@ class GameViewModel : ViewModel() {
     // Restringe la posición de la bola dentro de la pantalla
     private fun restrictBallPosition() {
         ballPosition = Offset(
-            x = ballPosition.x.coerceIn(25f, screenWidth - 25f),
-            y = ballPosition.y.coerceIn(25f, screenHeight - 25f)
+            x = ballPosition.x.coerceIn(25f, screenWidth - 150f),
+            y = ballPosition.y.coerceIn(25f, screenHeight - 150f)
         )
         updateBallBounds()
     }
+    fun setScreenDimensions(width: Float, height: Float) {
+        screenWidth = width
+        screenHeight = height
+        // Ajusta la posición inicial del suelo rojo dentro de los límites de la pantalla
+        floorSecondPosition = Offset(25f, 400f) // Inicia en el límite izquierdo
+    }
 
-    // Mueve el suelo rojo
     private fun moveFloorSecond() {
         floorSecondPosition = floorSecondPosition.copy(x = floorSecondPosition.x + floorSecondVelocity)
 
-        // Restringe el movimiento de la barra roja dentro de la pantalla
-        if (floorSecondPosition.x <= 0) {
-            floorSecondPosition = floorSecondPosition.copy(x = 0f) // Límite izquierdo
+        // Restringe el movimiento de la barra roja dentro de los límites de la pantalla
+        if (floorSecondPosition.x <= 25f) { // Límite izquierdo (donde comienza la bola)
+            floorSecondPosition = floorSecondPosition.copy(x = 25f) // Ajusta al límite izquierdo
             floorSecondVelocity = -floorSecondVelocity // Invierte la dirección (va hacia la derecha)
-        } else if (floorSecondPosition.x >= screenWidth - floorSecondWidth) { // Límite derecho
-            floorSecondPosition = floorSecondPosition.copy(x = screenWidth - floorSecondWidth) // Límite derecho
+        } else if (floorSecondPosition.x >= screenWidth - 25f - floorSecondWidth) { // Límite derecho (donde termina la bola)
+            floorSecondPosition = floorSecondPosition.copy(x = screenWidth - 25f - floorSecondWidth) // Ajusta al límite derecho
             floorSecondVelocity = -floorSecondVelocity // Invierte la dirección (va hacia la izquierda)
         }
 
@@ -194,7 +194,7 @@ class GameViewModel : ViewModel() {
         gameOverMessageVisible = false
         squareGenerationInterval = 3000L
         floorSecondVelocity = -2f // Velocidad inicial hacia la izquierda
-        floorSecondPosition = Offset(screenWidth - floorSecondWidth, 400f) // Inicia en el límite derecho
+        floorSecondPosition = Offset(screenWidth - 150f - floorSecondWidth, 400f) // Inicia en el límite derecho
     }
 
     // Maneja el movimiento del joystick

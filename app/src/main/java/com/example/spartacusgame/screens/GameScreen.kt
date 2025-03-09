@@ -2,6 +2,7 @@ package com.example.spartacusgame.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -26,7 +27,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun GameScreen(viewModel: GameViewModel, navController: NavController) {
     val configuration = LocalConfiguration.current
-    val context = LocalContext.current
     val screenWidthDp = configuration.screenWidthDp.dp
     val screenHeightDp = configuration.screenHeightDp.dp
 
@@ -76,10 +76,14 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController) {
         // Suelo rojo
         floorSecondManager.CreateFloor(
             modifier = Modifier
-                .width(80.dp)
-                .height(10.dp)
-                .align(Alignment.Center)
-                .offset { IntOffset(viewModel.floorSecondPosition.x.toInt(), 180) }
+                .width(viewModel.floorSecondWidth.dp) // Ancho del suelo rojo
+                .height(10.dp) // Altura del suelo rojo
+                .offset {
+                    IntOffset(
+                        viewModel.floorSecondPosition.x.toInt(),
+                        viewModel.floorSecondPosition.y.toInt()
+                    )
+                }
                 .background(Color.Red)
         )
 
