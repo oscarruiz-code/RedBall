@@ -7,20 +7,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spartacusgame.screens.Score
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.spartacusgame.utils.Constants
 
 class GameViewModel : ViewModel() {
 
-    // Estado del juego
     var ballPosition by mutableStateOf(Offset(200f, 350f))
     var isFalling by mutableStateOf(true)
     var isJumping by mutableStateOf(false)
     var ballBounds by mutableStateOf(Rect.Zero)
     var floorBounds by mutableStateOf(Rect.Zero)
     var floorSecondBounds by mutableStateOf(Rect.Zero)
-    var floorSecondPosition by mutableStateOf(Offset(25f, 400f)) // Inicia en el límite derecho
+    var floorSecondPosition by mutableStateOf(Offset(25f, 400f))
     var ballVelocity by mutableStateOf(0f)
     var jumpVelocity by mutableStateOf(0f)
     val gravity = Constants.GRAVITY
@@ -30,20 +30,16 @@ class GameViewModel : ViewModel() {
     var isGameOver by mutableStateOf(false)
     var gameOverMessageVisible by mutableStateOf(false)
 
-    // Dimensiones de la pantalla en píxeles
     var screenWidth by mutableStateOf(0f)
     var screenHeight by mutableStateOf(0f)
 
-    // Configuración del juego
     private var squareGenerationInterval = 3000L
     private var lastShotTime = 0L
     private val shotCooldown = 600L
-    private var floorSecondVelocity = -2f // Velocidad inicial hacia la izquierda
-    val floorSecondWidth = 100f // Ancho de la barra roja
+    private var floorSecondVelocity = -2f
+    val floorSecondWidth = 130f
 
 
-
-    // Inicia el bucle principal del juego
     fun startGameLoop() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -53,7 +49,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    // Actualiza el estado del juego
     private fun updateGameState() {
         if (isGameOver) return
 
@@ -63,34 +58,28 @@ class GameViewModel : ViewModel() {
         handleCollisions()
         updateBallBounds()
 
-        // Mueve las balas hacia arriba
         shots = shots.map { shot ->
             Rect(shot.left, shot.top - 5f, shot.right, shot.bottom - 5f)
         }.filter { it.bottom > 0 }.toMutableList()
 
-        // Mueve los cuadrados hacia abajo
         fallingSquares = fallingSquares.map { square ->
             Rect(square.left, square.top + 3f, square.right, square.bottom + 3f)
         }.filter { it.top < screenHeight }.toMutableList()
 
-        // Elimina cuadrados que toquen el suelo verde o el suelo rojo
         fallingSquares.removeAll { square ->
             square.overlaps(floorBounds) || square.overlaps(floorSecondBounds)
         }
 
-        // Verifica si la bola colisiona con algún cuadrado
         if (fallingSquares.any { it.overlaps(ballBounds) }) {
             gameOver()
         }
     }
 
-    // Aplica el movimiento horizontal de la bola
     private fun applyHorizontalMovement() {
         ballPosition = ballPosition.copy(x = ballPosition.x + ballVelocity)
         restrictBallPosition()
     }
 
-    // Aplica la gravedad a la bola
     private fun applyGravity() {
         if (isFalling) {
             ballPosition = ballPosition.copy(y = ballPosition.y + jumpVelocity)
@@ -99,9 +88,8 @@ class GameViewModel : ViewModel() {
         restrictBallPosition()
     }
 
-    // Maneja las colisiones de la bola con los suelos
     private fun handleCollisions() {
-        // Verifica colisión de la bola con el suelo verde
+
         if (ballBounds.overlaps(floorBounds)) {
             handleFloorCollision(floorBounds)
         } else {
@@ -109,7 +97,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    // Maneja la colisión con el suelo verde
     private fun handleFloorCollision(floorBounds: Rect) {
         isFalling = false
         isJumping = false
@@ -118,7 +105,6 @@ class GameViewModel : ViewModel() {
         restrictBallPosition()
     }
 
-    // Actualiza los límites de la bola
     private fun updateBallBounds() {
         ballBounds = Rect(
             left = ballPosition.x - 25f,
@@ -128,7 +114,6 @@ class GameViewModel : ViewModel() {
         )
     }
 
-    // Restringe la posición de la bola dentro de la pantalla
     private fun restrictBallPosition() {
         ballPosition = Offset(
             x = ballPosition.x.coerceIn(25f, screenWidth - 150f),
@@ -139,42 +124,48 @@ class GameViewModel : ViewModel() {
     fun setScreenDimensions(width: Float, height: Float) {
         screenWidth = width
         screenHeight = height
-        // Ajusta la posición inicial del suelo rojo dentro de los límites de la pantalla
-        floorSecondPosition = Offset(25f, 400f) // Inicia en el límite izquierdo
+
+        floorSecondPosition = Offset(200f, 300f)
     }
 
     private fun moveFloorSecond() {
         floorSecondPosition = floorSecondPosition.copy(x = floorSecondPosition.x + floorSecondVelocity)
 
-        // Restringe el movimiento de la barra roja dentro de los límites de la pantalla
-        if (floorSecondPosition.x <= 25f) { // Límite izquierdo (donde comienza la bola)
-            floorSecondPosition = floorSecondPosition.copy(x = 25f) // Ajusta al límite izquierdo
-            floorSecondVelocity = -floorSecondVelocity // Invierte la dirección (va hacia la derecha)
-        } else if (floorSecondPosition.x >= screenWidth - 25f - floorSecondWidth) { // Límite derecho (donde termina la bola)
-            floorSecondPosition = floorSecondPosition.copy(x = screenWidth - 25f - floorSecondWidth) // Ajusta al límite derecho
-            floorSecondVelocity = -floorSecondVelocity // Invierte la dirección (va hacia la izquierda)
+        if (floorSecondPosition.x <= 25f) {
+            floorSecondPosition = floorSecondPosition.copy(x = 25f)
+            floorSecondVelocity = -floorSecondVelocity
+        } else if (floorSecondPosition.x >= screenWidth - floorSecondWidth - 50f) {
+            floorSecondPosition = floorSecondPosition.copy(x = screenWidth - floorSecondWidth - 50f)
+            floorSecondVelocity = -floorSecondVelocity
         }
 
-        // Actualiza los límites de la barra roja
         floorSecondBounds = Rect(
             left = floorSecondPosition.x,
             top = floorSecondPosition.y,
-            right = floorSecondPosition.x + floorSecondWidth, // Ancho de la barra roja
-            bottom = floorSecondPosition.y + 30f // Altura de la barra roja
+            right = floorSecondPosition.x + floorSecondWidth,
+            bottom = floorSecondPosition.y + 30f
         )
     }
 
-    // Dispara una bala
     fun onShoot() {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastShotTime >= shotCooldown) {
-            val shot = Rect(ballPosition.x - 10f, ballPosition.y - 25f, ballPosition.x + 10f, ballPosition.y - 15f)
+
+            val ballCenterX = ballPosition.x
+            val ballCenterY = ballPosition.y - 25f
+
+            val shot = Rect(
+                left = ballCenterX - 10f,
+                top = ballCenterY - 20f,
+                right = ballCenterX + 10f,
+                bottom = ballCenterY
+            )
+
             shots.add(shot)
             lastShotTime = currentTime
         }
     }
 
-    // Finaliza el juego
     private fun gameOver() {
         isGameOver = true
         gameOverMessageVisible = true
@@ -193,16 +184,14 @@ class GameViewModel : ViewModel() {
         isGameOver = false
         gameOverMessageVisible = false
         squareGenerationInterval = 3000L
-        floorSecondVelocity = -2f // Velocidad inicial hacia la izquierda
+        floorSecondVelocity = -2f
         floorSecondPosition = Offset(screenWidth - 150f - floorSecondWidth, 400f) // Inicia en el límite derecho
     }
 
-    // Maneja el movimiento del joystick
     fun onJoystickMove(direction: Offset) {
         ballVelocity = direction.x * 5f
     }
 
-    // Inicia la generación de cuadrados
     fun startSquareGeneration() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -213,21 +202,18 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    // Genera un nuevo cuadrado en una posición aleatoria
     private fun generateSquare() {
-        val x = (0..screenWidth.toInt()).random().toFloat() // Posición aleatoria en el eje X
-        fallingSquares.add(Rect(x, 0f, x + 50f, 50f)) // Crea un cuadrado de 50x50 píxeles
+        val x = (0..screenWidth.toInt()).random().toFloat()
+        fallingSquares.add(Rect(x, 0f, x + 50f, 50f))
     }
 
-    // Aumenta la dificultad cada 100 puntos
     private fun increaseDifficulty() {
         if (score >= 100 && score % 100 == 0) {
             squareGenerationInterval = (squareGenerationInterval * 0.9).toLong() // Reduce el intervalo
-            floorSecondVelocity *= 1.1f // Aumenta la velocidad del suelo
+            floorSecondVelocity *= 1.1f
         }
     }
 
-    // Inicia la detección de colisiones
     fun startCollisionDetection() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -238,44 +224,59 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    // Verifica colisiones entre balas y cuadrados
     private fun checkShotCollisions() {
         val newShots = mutableListOf<Rect>()
         val newFallingSquares = mutableListOf<Rect>()
 
-        for (square in fallingSquares) {
-            val hitShot = shots.find { it.overlaps(square) }
-            if (hitShot != null) {
-                score += 20 // Aumenta el score si hay colisión
-            } else {
-                newFallingSquares.add(square) // Mantén el cuadrado si no colisiona
-            }
-        }
-
-        // Filtra las balas que no han colisionado
         for (shot in shots) {
-            if (!fallingSquares.any { it.overlaps(shot) }) {
-                newShots.add(shot) // Mantén la bala si no colisiona
+            var shotHit = false
+
+            for (square in fallingSquares) {
+                if (shot.overlaps(square)) {
+                    score += 20
+                    shotHit = true
+                    break
+                }
+            }
+
+            if (shot.overlaps(floorSecondBounds)) {
+                shotHit = true
+            }
+
+            if (!shotHit) {
+                newShots.add(shot)
             }
         }
 
-        // Actualiza las listas de balas y cuadrados
+        for (square in fallingSquares) {
+            if (!shots.any { it.overlaps(square) }) {
+                newFallingSquares.add(square)
+            }
+        }
+
         shots = newShots
         fallingSquares = newFallingSquares
     }
 
-    // Verifica colisiones entre la bola y los cuadrados o suelos
+
     private fun checkBallCollisions() {
-        // Verifica colisión de la bola con los cuadrados
+
         if (fallingSquares.any { it.overlaps(ballBounds) }) {
-            gameOver() // Si la bola toca un cuadrado, termina el juego
+            gameOver()
         }
 
-        // Verifica colisión de la bola con el suelo verde
         if (ballBounds.overlaps(floorBounds)) {
             handleFloorCollision(floorBounds)
         } else {
             isFalling = true
         }
     }
+
+    var scores by mutableStateOf<List<Score>>(emptyList())
+        private set
+
+    fun addScore(playerName: String, score: Int) {
+        scores = scores + Score(playerName, score)
+    }
+
 }

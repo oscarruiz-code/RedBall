@@ -22,7 +22,10 @@ fun AppNavigation(sharedViewModel: SharedViewModel) {
             MainScreen(navController, sharedViewModel)
         }
         composable("game_screen") {
-            GameScreen(gameViewModel, navController)
+            GameScreen(gameViewModel, navController, sharedViewModel)
+        }
+        composable("score_screen") {
+            ScoreScreen(navController, gameViewModel.scores)
         }
     }
 }

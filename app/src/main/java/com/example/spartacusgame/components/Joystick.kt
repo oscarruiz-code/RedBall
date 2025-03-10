@@ -1,19 +1,15 @@
 package com.example.spartacusgame.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -23,7 +19,6 @@ fun Joystick(modifier: Modifier = Modifier, onMove: (Offset) -> Unit) {
     Box(
         modifier = modifier
             .size(120.dp)
-            .background(Color.LightGray, shape = CircleShape)
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
@@ -41,15 +36,9 @@ fun Joystick(modifier: Modifier = Modifier, onMove: (Offset) -> Unit) {
             },
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.size(120.dp)) {
-            drawCircle(color = Color.LightGray, radius = size.minDimension / 2)
-        }
-        Canvas(
-            modifier = Modifier
-                .size(40.dp)
-                .offset { IntOffset(knobPosition.x.toInt(), knobPosition.y.toInt()) }
-        ) {
-            drawCircle(color = Color.DarkGray, radius = size.minDimension / 2)
+
+        Canvas(modifier = Modifier.size(40.dp)) {
+            drawCircle(color = Color.White, radius = size.minDimension / 2) // Círculo blanco
         }
     }
 }

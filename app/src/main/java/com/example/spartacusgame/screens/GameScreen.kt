@@ -1,5 +1,7 @@
 package com.example.spartacusgame.screens
 
+import FloorManager
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,32 +11,49 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.spartacusgame.R
 import com.example.spartacusgame.components.*
+import com.example.spartacusgame.utils.AudioManager
 import com.example.spartacusgame.viewmodels.GameViewModel
+import com.example.spartacusgame.viewmodels.SharedViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun GameScreen(viewModel: GameViewModel, navController: NavController) {
+fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedViewModel: SharedViewModel) {
+    val context = LocalContext.current
+    val audioManager = remember { AudioManager(context) }
+
+    LaunchedEffect(Unit) {
+        audioManager.playLoopingAudio(R.raw.juego)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            audioManager.stopAudio()
+        }
+    }
+
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp.dp
     val screenHeightDp = configuration.screenHeightDp.dp
-
-    // Convertir dp a píxeles
     val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
     val screenHeightPx = with(LocalDensity.current) { screenHeightDp.toPx() }
 
-    // Pasa las dimensiones de la pantalla al ViewModel
     LaunchedEffect(screenWidthPx, screenHeightPx) {
         viewModel.setScreenDimensions(screenWidthPx, screenHeightPx)
     }
@@ -42,6 +61,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController) {
     val ballManager = BallManager(viewModel.ballPosition)
     val floorManager = FloorManager(onPositionChange = { viewModel.floorBounds = it })
     val floorSecondManager = FloorManager(onPositionChange = { viewModel.floorSecondBounds = it })
+    val enemyImage = ImageBitmap.imageResource(id = R.drawable.enemigo)
 
     LaunchedEffect(Unit) {
         viewModel.startGameLoop()
@@ -49,48 +69,44 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController) {
         viewModel.startCollisionDetection()
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF19E0EE))
+            .background(Color(0xFF54C7F2))
     ) {
-        // Fondo
+
         Image(
             painter = painterResource(id = R.drawable.fondojuego),
             contentDescription = "Fondo",
             modifier = Modifier
-                .fillMaxSize()
-                .offset(y = 30.dp),
+                .fillMaxSize(),
             contentScale = ContentScale.Crop
         )
 
-        // Suelo verde
         floorManager.CreateFloor(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(30.dp)
+                .height(2.dp)
                 .align(Alignment.BottomStart)
-                .offset(y = -20.dp)
+                .offset(y = -40.dp)
         )
 
-        // Suelo rojo
         floorSecondManager.CreateFloor(
             modifier = Modifier
-                .width(viewModel.floorSecondWidth.dp) // Ancho del suelo rojo
-                .height(10.dp) // Altura del suelo rojo
+                .width(viewModel.floorSecondWidth.dp)
+                .height(30.dp)
                 .offset {
                     IntOffset(
                         viewModel.floorSecondPosition.x.toInt(),
                         viewModel.floorSecondPosition.y.toInt()
                     )
-                }
-                .background(Color.Red)
+                },
+            imageResId = R.drawable.suelo
         )
 
-        // Bola
         ballManager.CreateBall()
 
-        // Joystick
         Joystick(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -98,63 +114,63 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController) {
             onMove = { viewModel.onJoystickMove(it) }
         )
 
-        // Botón de disparo
         JumpButton(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .offset(y = 20.dp)
+                .offset(y = -60.dp)
                 .padding(start = 32.dp),
             onJump = { viewModel.onShoot() }
         )
 
-        // Dibuja los disparos y cuadrados
         Box(modifier = Modifier.fillMaxSize()) {
             viewModel.shots.forEach { shot ->
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.bala),
+                    contentDescription = "Bala",
                     modifier = Modifier
                         .offset { IntOffset(shot.left.toInt(), shot.top.toInt()) }
                         .size(20.dp)
-                        .background(Color.Blue, CircleShape)
                 )
             }
 
-            viewModel.fallingSquares.forEach { square ->
-                Box(
-                    modifier = Modifier
-                        .offset { IntOffset(square.left.toInt(), square.top.toInt()) }
-                        .size(50.dp)
-                        .background(Color.Red)
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                viewModel.fallingSquares.forEach { square ->
+                    drawImage(
+                        image = enemyImage,
+                        dstOffset = IntOffset(square.left.toInt(), square.top.toInt()),
+                        dstSize = IntSize(50.dp.roundToPx(), 50.dp.roundToPx())
+                    )
+                }
+            }
+
+
+            if (viewModel.gameOverMessageVisible) {
+                Text(
+                    text = "Game Over",
+                    color = Color.Red,
+                    fontSize = 48.sp,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
-        }
 
-        // Mensaje de Game Over
-        if (viewModel.gameOverMessageVisible) {
             Text(
-                text = "Game Over",
-                color = Color.Red,
-                fontSize = 48.sp,
-                modifier = Modifier.align(Alignment.Center)
+                text = "Score: ${viewModel.score}",
+                color = Color.Black,
+                fontSize = 24.sp,
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
             )
         }
 
-        // Puntaje
-        Text(
-            text = "Score: ${viewModel.score}",
-            color = Color.Black,
-            fontSize = 24.sp,
-            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
-        )
-    }
-
-    // Navega al MainScreen cuando el juego termina
-    LaunchedEffect(viewModel.isGameOver) {
-        if (viewModel.isGameOver) {
-            delay(2000)
-            navController.navigate("main_screen") {
-                popUpTo("game_screen") { inclusive = true }
+        LaunchedEffect(viewModel.isGameOver) {
+            if (viewModel.isGameOver) {
+                val playerName = sharedViewModel.playerName
+                viewModel.addScore(playerName, viewModel.score)
+                delay(2000)
+                navController.navigate("main_screen") {
+                    popUpTo("game_screen") { inclusive = true }
+                }
+                viewModel.resetGame()
             }
-            viewModel.resetGame()
         }
     }
 }

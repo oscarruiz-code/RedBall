@@ -6,10 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 class SharedViewModel : ViewModel() {
-    var background by mutableStateOf("first")
-        private set
+    private var _playerName by mutableStateOf("")
+    var playerName: String
+        get() = _playerName
+        set(value) {
 
-    fun changeBackground(newBackground: String) {
-        background = newBackground
-    }
+            if (value.isNotBlank()) {
+                _playerName = value
+            }
+        }
 }
