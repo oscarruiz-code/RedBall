@@ -1,3 +1,5 @@
+package com.example.spartacusgame.components;
+
 import androidx.compose.foundation.Canvas;
 import androidx.compose.foundation.Image;
 import androidx.compose.foundation.layout.Box;
