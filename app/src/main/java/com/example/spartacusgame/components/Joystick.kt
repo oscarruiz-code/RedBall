@@ -14,16 +14,7 @@ import androidx.compose.ui.unit.dp;
 
 /**
  * Componente de joystick que permite detectar movimientos táctiles y notificar la dirección del movimiento.
- * El joystick consta de un círculo blanco que se puede arrastrar dentro de un área limitada.
- * 
- * @param modifier Modificador de Compose que se aplica al contenedor del joystick.
- * @param onMove Función de callback que se ejecuta cuando el joystick se mueve.
- *               Recibe un objeto {@link Offset} que representa la dirección normalizada del movimiento.
- * 
- * @see Box
- * @see Canvas
- * @see detectDragGestures
- * @see Offset
+ * @author oscarruiz-code
  */
 @Composable
 fun Joystick(modifier: Modifier = Modifier, onMove: (Offset) -> Unit) {

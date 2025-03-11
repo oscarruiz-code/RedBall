@@ -7,6 +7,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.spartacusgame.navigation.AppNavigation
 import com.example.spartacusgame.viewmodels.SharedViewModel
 
+/**
+ * Clase ejecutable
+ *
+ * @author oscarruiz-code
+ *
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

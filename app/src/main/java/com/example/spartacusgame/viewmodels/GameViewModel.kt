@@ -12,6 +12,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.spartacusgame.utils.Constants
 
+/**
+ * Clase que nos maneja la logica de nuestra ventana juego
+ *
+ * @author oscarruiz-code
+ *
+ */
 class GameViewModel : ViewModel() {
 
     var ballPosition by mutableStateOf(Offset(200f, 350f))
@@ -39,7 +45,7 @@ class GameViewModel : ViewModel() {
     private var floorSecondVelocity = -2f
     val floorSecondWidth = 130f
 
-
+    //Empieza el juegi a los 10 mils
     fun startGameLoop() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -49,6 +55,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Actualiza conforme vayan ocurriendo eventos en nuestra aplicacion y lo mantenemos actualizado en cualquier momento
     private fun updateGameState() {
         if (isGameOver) return
 
@@ -75,11 +82,13 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Movimiento horizontal
     private fun applyHorizontalMovement() {
         ballPosition = ballPosition.copy(x = ballPosition.x + ballVelocity)
         restrictBallPosition()
     }
 
+    //Manejo de gravedad
     private fun applyGravity() {
         if (isFalling) {
             ballPosition = ballPosition.copy(y = ballPosition.y + jumpVelocity)
@@ -88,6 +97,7 @@ class GameViewModel : ViewModel() {
         restrictBallPosition()
     }
 
+    //Manejo de colision con la bola y el suelo primario
     private fun handleCollisions() {
 
         if (ballBounds.overlaps(floorBounds)) {
@@ -97,6 +107,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Manejo de distancias en la que hace la colision la bola con el suelo primario
     private fun handleFloorCollision(floorBounds: Rect) {
         isFalling = false
         isJumping = false
@@ -105,6 +116,7 @@ class GameViewModel : ViewModel() {
         restrictBallPosition()
     }
 
+    //Actualiza en cualquier momento la posicion de la bola
     private fun updateBallBounds() {
         ballBounds = Rect(
             left = ballPosition.x - 25f,
@@ -114,6 +126,7 @@ class GameViewModel : ViewModel() {
         )
     }
 
+    //Restringe el movimiento de la bola en las dimensiones de la pantalla que nosotros le hemos dado
     private fun restrictBallPosition() {
         ballPosition = Offset(
             x = ballPosition.x.coerceIn(25f, screenWidth - 150f),
@@ -121,6 +134,8 @@ class GameViewModel : ViewModel() {
         )
         updateBallBounds()
     }
+
+    //Definirle las dimensiones a nuestra pantalla con el suelo secundario
     fun setScreenDimensions(width: Float, height: Float) {
         screenWidth = width
         screenHeight = height
@@ -128,6 +143,7 @@ class GameViewModel : ViewModel() {
         floorSecondPosition = Offset(200f, 300f)
     }
 
+    //Manejo del movimiento dinamico del suelo secundario
     private fun moveFloorSecond() {
         floorSecondPosition = floorSecondPosition.copy(x = floorSecondPosition.x + floorSecondVelocity)
 
@@ -147,6 +163,7 @@ class GameViewModel : ViewModel() {
         )
     }
 
+    //Manejo del disparo
     fun onShoot() {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastShotTime >= shotCooldown) {
@@ -166,6 +183,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Manejo de perder el juego
     private fun gameOver() {
         isGameOver = true
         gameOverMessageVisible = true
@@ -185,13 +203,15 @@ class GameViewModel : ViewModel() {
         gameOverMessageVisible = false
         squareGenerationInterval = 3000L
         floorSecondVelocity = -2f
-        floorSecondPosition = Offset(screenWidth - 150f - floorSecondWidth, 400f) // Inicia en el límite derecho
+        floorSecondPosition = Offset(screenWidth - 150f - floorSecondWidth, 400f)
     }
 
+    //Definir movimiento al joystick
     fun onJoystickMove(direction: Offset) {
         ballVelocity = direction.x * 5f
     }
 
+    //Funcion para comenzar a generar enemigos
     fun startSquareGeneration() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -202,11 +222,13 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Dimensiones en la que se me generan los enemigos
     private fun generateSquare() {
         val x = (0..screenWidth.toInt()).random().toFloat()
         fallingSquares.add(Rect(x, 0f, x + 50f, 50f))
     }
 
+    //Incrememto de la dificultad segun la puntacion
     private fun increaseDifficulty() {
         if (score >= 100 && score % 100 == 0) {
             squareGenerationInterval = (squareGenerationInterval * 0.9).toLong() // Reduce el intervalo
@@ -214,6 +236,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Comienzo de deteccion de colisiones
     fun startCollisionDetection() {
         viewModelScope.launch {
             while (!isGameOver) {
@@ -224,6 +247,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    //Comprobar colisiones con el suelo secundario
     private fun checkShotCollisions() {
         val newShots = mutableListOf<Rect>()
         val newFallingSquares = mutableListOf<Rect>()

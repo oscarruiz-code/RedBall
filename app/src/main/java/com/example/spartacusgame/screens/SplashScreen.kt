@@ -18,10 +18,18 @@ import androidx.navigation.NavController
 import com.example.spartacusgame.R
 import kotlinx.coroutines.delay
 
+/**
+ * Clase que nos maneja el estilo visual de nuestra pantalla splash y se encarga de hacer visible nuestros componentes
+ *
+ * @author oscarruiz-code
+ *
+ */
+
 @Composable
 fun SplashScreen(navController: NavController) {
     var progress by remember { mutableStateOf(0f) }
 
+    //Hace el evento al principio unico y es una animacion que cuando acaba pasa al mainscreen
     LaunchedEffect(Unit) {
         while (progress < 1f) {
             delay(50)
@@ -32,6 +40,7 @@ fun SplashScreen(navController: NavController) {
         }
     }
 
+    //Representa la imagen de la bola con la barra de carga
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

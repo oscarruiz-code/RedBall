@@ -32,12 +32,18 @@ import com.example.spartacusgame.utils.AudioManager
 import com.example.spartacusgame.viewmodels.GameViewModel
 import com.example.spartacusgame.viewmodels.SharedViewModel
 import kotlinx.coroutines.delay
-
+/**
+ * Clase que nos maneja el estilo visual de nuestra pantalla juego y se encarga de hacer visible nuestros componentes
+ *
+ * @author oscarruiz-code
+ *
+ */
 @Composable
 fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val audioManager = remember { AudioManager(context) }
 
+    //Inicio el Audio apartir de mis utilidades
     LaunchedEffect(Unit) {
         audioManager.playLoopingAudio(R.raw.juego)
     }
@@ -54,6 +60,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
     val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
     val screenHeightPx = with(LocalDensity.current) { screenHeightDp.toPx() }
 
+    //Inicio y recojo las dimensiones de mi pantalla para ajustar todas las posiciones y todo
     LaunchedEffect(screenWidthPx, screenHeightPx) {
         viewModel.setScreenDimensions(screenWidthPx, screenHeightPx)
     }
@@ -63,6 +70,8 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
     val floorSecondManager = FloorManager(onPositionChange = { viewModel.floorSecondBounds = it })
     val enemyImage = ImageBitmap.imageResource(id = R.drawable.enemigo)
 
+
+    //Es el encargado de tener todos los componentes actualizados y que vaya toda la carga fluida
     LaunchedEffect(Unit) {
         viewModel.startGameLoop()
         viewModel.startSquareGeneration()
@@ -76,6 +85,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
             .background(Color(0xFF54C7F2))
     ) {
 
+        //Imagen de fonde de nuestra pestana Juego
         Image(
             painter = painterResource(id = R.drawable.fondojuego),
             contentDescription = "Fondo",
@@ -84,6 +94,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
             contentScale = ContentScale.Crop
         )
 
+        //Suelo principal abajo del todo
         floorManager.CreateFloor(
             modifier = Modifier
                 .fillMaxWidth()
@@ -92,6 +103,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
                 .offset(y = -40.dp)
         )
 
+        //Suelo secundario con el que colisionann balas y enemigos
         floorSecondManager.CreateFloor(
             modifier = Modifier
                 .width(viewModel.floorSecondWidth.dp)
@@ -105,6 +117,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
             imageResId = R.drawable.suelo
         )
 
+        //Creacion de nuestro componentes peronaje, boton y demas apartir de nuestro componentes
         ballManager.CreateBall()
 
         Joystick(
@@ -122,6 +135,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
             onJump = { viewModel.onShoot() }
         )
 
+        //Encargado de generar ccuando existe una acion tanto balas como enemigos en la pantalla
         Box(modifier = Modifier.fillMaxSize()) {
             viewModel.shots.forEach { shot ->
                 Image(
@@ -161,6 +175,7 @@ fun GameScreen(viewModel: GameViewModel, navController: NavController, sharedVie
             )
         }
 
+        //Evento que sucede una vez cuando la colision entre enemigo y personaje ocurre
         LaunchedEffect(viewModel.isGameOver) {
             if (viewModel.isGameOver) {
                 val playerName = sharedViewModel.playerName

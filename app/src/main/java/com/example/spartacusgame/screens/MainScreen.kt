@@ -28,11 +28,19 @@ import com.example.spartacusgame.utils.AudioManager
 import com.example.spartacusgame.viewmodels.SharedViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * Clase que nos maneja el estilo visual de nuestra pantalla principal y se encarga de hacer visible nuestros componentes
+ *
+ * @author oscarruiz-code
+ *
+ */
+
 @Composable
 fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val audioManager = remember { AudioManager(context) }
 
+    //Inicio el Audio apartir de mis utilidades
     LaunchedEffect(Unit) {
         audioManager.playLoopingAudio(R.raw.intro)
     }
@@ -68,6 +76,7 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
 
     val activity = context as? Activity
 
+    //Representacion de nuestra imagen de fondo de la mainscreen
     Box(modifier = Modifier.fillMaxSize()) {
 
         val backgroundImage = R.drawable.fondopantalla
@@ -82,6 +91,7 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
         )
 
 
+        //Representacion del recuadro de introducir nombre
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,6 +108,7 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
             )
         }
 
+        //Representacion de botones correctamente
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,6 +158,10 @@ fun MainScreen(navController: NavController, sharedViewModel: SharedViewModel) {
 
 }
 
+/**
+ * Funcion que controla la animacion para hacer que el recuadro de introducir nombre parezca que esta
+ * palpitando
+ */
 @Composable
 fun PulsatingInput(
     value: String,

@@ -13,7 +13,6 @@ import com.example.spartacusgame.R;
 
 /**
  * Clase que gestiona la creación y visualización de una bola en la interfaz de usuario.
- * La posición de la bola se define mediante un objeto {@link Offset}.
  * 
  * @author oscarruiz-code
  */
@@ -21,15 +20,8 @@ class BallManager(
     private val position: Offset
 ) {
     /**
-     * Método que crea y muestra una bola en la posición especificada.
-     * Utiliza un recurso de imagen para representar la bola y la ajusta al tamaño y posición indicados.
-     * 
-     * Este método es anotado con {@link Composable}, lo que permite su uso en componentes de Compose.
-     * 
-     * @see Image
-     * @see Modifier
-     * @see Offset
-     * @see IntOffset
+     Introduciomos un recurso de imagen, que tenemos importado, y estamos modificando sis dimensiones
+     y posicion
      */
     @Composable
     fun CreateBall() {

@@ -20,11 +20,18 @@ import com.example.spartacusgame.utils.AudioManager
 
 data class Score(val playerName: String, val score: Int)
 
+/**
+ * Clase que nos maneja el estilo visual de nuestra pantalla puntuacion y se encarga de hacer visible nuestros componentes
+ *
+ * @author oscarruiz-code
+ *
+ */
 @Composable
 fun ScoreScreen(navController: NavController, scores: List<Score>) {
     val context = LocalContext.current
     val audioManager = remember { AudioManager(context) }
 
+    //Inicio el Audio apartir de mis utilidades
     LaunchedEffect(Unit) {
         audioManager.playLoopingAudio(R.raw.puntuacion)
     }
@@ -35,6 +42,7 @@ fun ScoreScreen(navController: NavController, scores: List<Score>) {
         }
     }
 
+    //Representa la puntuacion ligada a nuestro usuario que se ha registrado
     Box(
         modifier = Modifier
             .fillMaxSize()

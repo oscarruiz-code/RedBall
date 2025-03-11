@@ -13,14 +13,6 @@ import com.example.spartacusgame.viewmodels.SharedViewModel;
  * Componente de navegación principal de la aplicación.
  * Define las rutas de navegación y las pantallas asociadas a cada ruta.
  * Utiliza un controlador de navegación para gestionar la transición entre pantallas.
- * 
- * @param sharedViewModel ViewModel compartido que se pasa a las pantallas que lo requieren.
- * 
- * @see NavHost
- * @see rememberNavController
- * @see composable
- * @see GameViewModel
- * @see SharedViewModel
  */
 @Composable
 fun AppNavigation(sharedViewModel: SharedViewModel) {

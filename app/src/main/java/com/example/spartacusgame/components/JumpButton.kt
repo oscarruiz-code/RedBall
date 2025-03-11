@@ -15,15 +15,7 @@ import androidx.compose.ui.unit.dp;
 
 /**
  * Componente de botón de salto que permite detectar toques y ejecutar una acción de salto.
- * El botón está representado visualmente por un triángulo blanco.
- * 
- * @param modifier Modificador de Compose que se aplica al contenedor del botón.
- * @param onJump Función de callback que se ejecuta cuando se detecta un toque en el botón.
- * 
- * @see Box
- * @see Canvas
- * @see detectTapGestures
- * @see Path
+ * @author oscarruiz-code
  */
 @Composable
 fun JumpButton(modifier: Modifier = Modifier, onJump: () -> Unit) {
