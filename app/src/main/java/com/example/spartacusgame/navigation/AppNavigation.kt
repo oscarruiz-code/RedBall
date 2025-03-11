@@ -1,31 +1,44 @@
-package com.example.spartacusgame.navigation
+package com.example.spartacusgame.navigation;
 
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.spartacusgame.screens.*
-import com.example.spartacusgame.viewmodels.GameViewModel
-import com.example.spartacusgame.viewmodels.SharedViewModel
+import androidx.compose.runtime.Composable;
+import androidx.lifecycle.viewmodel.compose.viewModel;
+import androidx.navigation.compose.NavHost;
+import androidx.navigation.compose.composable;
+import androidx.navigation.compose.rememberNavController;
+import com.example.spartacusgame.screens.*;
+import com.example.spartacusgame.viewmodels.GameViewModel;
+import com.example.spartacusgame.viewmodels.SharedViewModel;
 
+/**
+ * Componente de navegación principal de la aplicación.
+ * Define las rutas de navegación y las pantallas asociadas a cada ruta.
+ * Utiliza un controlador de navegación para gestionar la transición entre pantallas.
+ * 
+ * @param sharedViewModel ViewModel compartido que se pasa a las pantallas que lo requieren.
+ * 
+ * @see NavHost
+ * @see rememberNavController
+ * @see composable
+ * @see GameViewModel
+ * @see SharedViewModel
+ */
 @Composable
 fun AppNavigation(sharedViewModel: SharedViewModel) {
-    val navController = rememberNavController()
-    val gameViewModel: GameViewModel = viewModel()
+    val navController = rememberNavController();
+    val gameViewModel: GameViewModel = viewModel();
 
     NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
-            SplashScreen(navController)
+            SplashScreen(navController);
         }
         composable("main_screen") {
-            MainScreen(navController, sharedViewModel)
+            MainScreen(navController, sharedViewModel);
         }
         composable("game_screen") {
-            GameScreen(gameViewModel, navController, sharedViewModel)
+            GameScreen(gameViewModel, navController, sharedViewModel);
         }
         composable("score_screen") {
-            ScoreScreen(navController, gameViewModel.scores)
+            ScoreScreen(navController, gameViewModel.scores);
         }
     }
 }
